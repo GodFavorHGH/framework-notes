@@ -274,3 +274,49 @@ Xid发布出去，订阅的拿到消息后就属同义词事务中
 
 
 mongdb要学  数据存储结构  bson  二进制json
+
+
+Feign调用服务的默认时长是1秒钟，也就是如果超过1秒没连接上或者超过1秒没响应，那么会相应的报错。
+Feign 的负载均衡底层用的就是 Ribbon
+  在application.properties中添加如下配置，超过5秒没连接上报连接超时，如果超过5秒没有响应，报请求超时
+
+#全局配置
+# 请求连接的超时时间 默认的时间为 1 秒
+ribbon.ConnectTimeout=5000
+# 请求处理的超时时间
+ribbon.ReadTimeout=5000
+
+feign超时重试机制
+
+seata0.9不支持集群
+用1.0以后版本
+
+tc：seate server就是全局管理
+tm，谁标注globaltransactional就是发起方
+rm：事务的参与方
+
+seata四大模式
+AT（默认模式）
+TC
+SAGA
+XA
+
+before image（前置镜像）-》执行业务sql-》after image（后置镜像）-》生成行锁=》提交事务
+
+一阶段加载
+二阶段提交
+二阶段回滚
+
+事务的退回：反向补偿   delete-》insert   update-》反向update
+有脏写的话就要人工处理
+
+
+分布式事务全局id的生成
+	uuid 虽也具有唯一性，但是不是顺序递增，而且长度太长，不满足MySQL索引
+	mysql自增id，唯一且递增，但是并发不高，数据库压力太大，每次生成都要写数据库，影响性能
+	基于redis生成全局id生成策略（key有过期时间，增长步长）配置麻烦，维护麻烦，需要维护一个集群，某太极单机，导致生成不连续
+	雪花算法
+	
+
+
+
