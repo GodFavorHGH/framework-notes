@@ -1,0 +1,33 @@
+1、按项目名称和star数
+	exp:    
+		in:name spring boot stars>1000 forks>1000
+2、按日期
+	exp:
+		in name:spring boot pushed>2020-01-01
+3、按编程语言
+	EXP:
+		in name:spring boot language:java
+	exp:
+		in readme:spring boot stars>1000
+	exp:
+		in description:	
+
+			github代码仓库
+		https://github.com/GodFavorHGH/remoteRepositoryGithub
+
+		git命令
+
+create a new repository on the command line
+	echo "# githubRemoteReposotory" >> README.md
+	git init
+	git add README.md
+	git commit -m "first commit"
+	git remote add origin https://github.com/GodFavorHGH/githubRemoteReposotory.git
+	git push -u origin master
+
+push an existing repository from the command line
+	git remote add origin https://github.com/GodFavorHGH/githubRemoteReposotory.git
+	git push -u origin master
+
+
+

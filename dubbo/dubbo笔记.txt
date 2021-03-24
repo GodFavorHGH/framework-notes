@@ -1,0 +1,44 @@
+dubbo是什么，用来做什么，怎么用？
+RPC框架
+
+不同进程之间进行网络通信，序列化与反序列化
+RPC机制
+
+dubbo应用场景
+RPC调用、负载均衡、服务注册与发现、流量调度、服务治理与运维
+
+推荐使用zookeeper做注册中心
+启动dubbo之前需要先启动zk服务
+
+
+服务提供者
+1、将服务 提供者注册到注册中心
+	1）引入dubbo
+	2）引入zookeeper的客户端（2.6以上curator）
+	3）配置服务提供者
+	provider.xml
+		1、指定当前服务/应用的名字
+		2、指定注册中心的位置
+		3、指定通信规则（通信协议、地址、端口）
+		4、暴露服务  ref，指向服务的真正的实现对象
+		5、配置接口的服务实现
+2、让服务消费者取注册中心订阅服务提供者
+
+负载均衡
+@Service(loadbalance="roundrobin")，默认为权重轮询方式
+服务降级--强制返回空，调用失败返回空
+集群容错
+服务容错（集成hystrix）在主程序类加上@EnableHystrix
+方法加上@HystrixCommand
+
+dubbo原理
+底层用netty实现服务器监听
+
+rpc原理
+基于netty，netty，nio（非阻塞，基于流），bio（阻塞，基于缓冲区，多路复用，Channel、Selector（多路复用器））
+
+
+
+
+
+

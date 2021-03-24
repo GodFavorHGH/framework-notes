@@ -1,0 +1,58 @@
+1、建表
+create table stf_wk_jnl(
+	wk_jnl integer not null auto_increment,
+    stf_id integer not null,
+    wk_dt date not null,
+    recd_tm timestamp not null,
+    primary key(wk_jnl),--主键约束
+    key (stf_id),--索引
+    constraint fk_stf_id foreign key(stf_id) references stuff(stf_id) on delete cascade--外键约束
+);
+外键约束==
+       1)CASCADE：从父表删除或更新且自动删除或更新子表中匹配的行。
+       2)SET NULL：从父表删除或更新行，并设置子表中的外键列为NULL。如果使用该选项，必须保证子表列没有指
+定NOT NULL。
+       3)RESTRICT：拒绝对父表的删除或更新操作。
+       4)NO ACTION：标准SQL的关键字，在MySQL中与RESTRICT相同。
+
+看你的mysql当前默认的存储引擎:
+mysql> show variables like '%storage_engine%';
+ 
+你要看某个表用了什么引擎(在显示结果里参数engine后面的就表示该表当前用的存储引擎):
+mysql> show create table 表名;
+删除索引的语法
+DROP INDEX [indexName] ON mytable;
+创建索引
+CREATE UNIQUE INDEX indexName ON mytable(username(length))
+修改表结构 
+ALTER table mytable ADD UNIQUE [indexName] (username(length))
+创建表的时候直接指定
+CREATE TABLE mytable(  
+ 
+ID INT NOT NULL,   
+ 
+username VARCHAR(16) NOT NULL,  
+ 
+UNIQUE [indexName] (username(length))  
+ 
+);
+使用ALTER 命令添加和删除索引
+有四种方式来添加数据表的索引：
+ALTER TABLE tbl_name ADD PRIMARY KEY (column_list): 该语句添加一个主键，这意味着索引值必须是唯一的，且不能为NULL。
+
+ALTER TABLE tbl_name ADD UNIQUE index_name (column_list): 这条语句创建索引的值必须是唯一的（除了NULL外，NULL可能会出现多次）。
+ALTER TABLE tbl_name ADD INDEX index_name (column_list): 添加普通索引，索引值可出现多次。
+ALTER TABLE tbl_name ADD FULLTEXT index_name (column_list):该语句指定了索引为 FULLTEXT ，用于全文索引。
+在表中添加索引。
+mysql> ALTER TABLE testalter_tbl ADD INDEX (c);
+在 ALTER 命令中使用 DROP 子句来删除索引。
+mysql> ALTER TABLE testalter_tbl DROP INDEX c;
+使用 ALTER 命令添加和删除主键
+mysql> ALTER TABLE testalter_tbl MODIFY i INT NOT NULL;
+mysql> ALTER TABLE testalter_tbl ADD PRIMARY KEY (i);
+使用 ALTER 命令删除主键
+mysql> ALTER TABLE testalter_tbl DROP PRIMARY KEY;
+显示索引信息
+mysql> SHOW INDEX FROM table_name;
+修改表字段
+alter  table table1 modify  column column1  decimal(10,1) DEFAULT NULL COMMENT '注释';

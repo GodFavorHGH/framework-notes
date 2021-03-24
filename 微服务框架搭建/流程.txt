@@ -1,0 +1,276 @@
+bilibili  尚硅谷周阳
+
+
+1、引入父工程
+2、建立子module
+3、改pom文件
+4、写yml配置文件
+5、启动类
+6、业务类
+
+
+springcloud整合zookeeper替代eureka
+
+
+服务注册与发现
+1、eureka （AP）
+2、zookeeper （CP）
+3、consul （CP）
+4、nacos
+
+
+负载均衡
+ribbon 负载均衡客户端   进程式  | 集中式  软负载均衡
+
+nginx  服务端负载均衡
+
+ribbon 负载均衡算法  IRule
+
+手写自定义负载均衡算法
+轮询负载均衡
+resttemplate不要使用loadbalanced注解
+
+自定义配置    不能放在ComponentScan能扫描到的包
+
+
+
+feign
+自带负载均衡
+面向微服务接口调用
+
+feign超时控制
+
+
+
+hystrix服务熔断
+	服务降级  使用注解及用法
+	服务熔断 （那些情况会出现）
+	服务限流
+
+zuul 阻塞io
+微服务网关  zuul（不用）
+gateway 相比zull的优势
+基于netty
+反向代理、
+异步非阻塞模型
+
+动态路由、断言、过滤器
+网关路由配置方式
+1、yml 2、Java bean配置
+
+接口请求的方式
+1、jmeter 2、postman 3、curl命令
+
+自定义过滤器filter，需实现globalfilter、ordered
+
+
+config server
+
+config client 配置读取server的配置信息
+server的端口要配置成8888才行，另外client配置bootstrap.yml，client的依赖
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-config</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+</dependencies>
+
+
+
+config client 客户端动态刷新（手动刷新）
+问题：server修改配置实时生效，但是客户端要重启才能生效
+服务端和客户端的配置文件添加如下：
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+发送post请求同时客户端刷新
+curl -X POST "http://localhost:3355/actuator/refresh"
+
+
+自动刷新？   广播消息--》消息队列
+
+动态刷新全局广播
+
+消息总线  spring cloud bus
+
+方式：
+1、利用消息总线触发一个客户端/bus/refresh，从而刷新所有客户端的配置
+2、利用消息总线触发一个服务端ConfigServer的/bus/refresh断电，从而刷新所有客户端的配置
+
+不推荐方式1，微服务作为单一的模块，如果作为消息通知，而服务本身不可用，比如宕机，则无法完成
+
+发送一个消息触发configserver，通知其他客户端刷新
+curl -X POST "http://localhost:8888/actuator/bus-refresh"
+
+动态刷新定点通知（不想全部通知，只想定点通知==指定某一个实例生效而不是全部实例）
+命令：
+http://localhost:配置中心的端口号/actuator/bus-refresh/{destination}
+如：
+curl -X POST "http://localhost:8888/actuator/bus-refresh/config-client（微服务实例名称）:3355" (只通知3355)
+
+
+
+spring cloud stream
+是什么
+	构建消息驱动微服务的框架
+	消息驱动
+	适配绑定，切换mq
+解决什么问题
+	
+怎么用
+	binder对象负责与消息中间件交互
+
+
+MQ消息中间件 ActiveMQ、RabbitMQ、RocketMQ、Kafka
+目前只支持 RabbitMQ和Kafka
+
+binder设计思想
+如何实现解耦
+
+
+
+spring cloud stream流程、常用注解
+
+binder
+channel
+source sink
+
+@input
+@out
+@streamlistener
+@enablebinding
+
+消费者如何获得消息消费
+
+
+分组消费与持久化
+	利用分组解决重复消费
+	默认分组group是不同的，组流水号不一样，被认为不同的组，可以同时消费消息
+
+
+	自定义分组
+	轮询分组，设置一样的group
+
+
+持久化
+	消息丢失
+	设置group的重要性
+	避免消息丢失
+
+sleuth服务跟踪的解决方案（主要是配置） zipkin dashboard
+zipkin界面
+
+
+spring-cloud-alibaba
+
+nacos naming-configuration-service
+
+copy configuration
+-Dserver.port=xxx    ==》 模拟虚拟集群
+
+
+nacos自带负载均衡   实现？ 整合了ribbon（支持负载均衡，可以调rest）
+
+服务注册中心的对比
+	nacos可以切换AP和CP
+	CP临时节点
+	AP永久节点
+nacos替代eureka做注册中心
+nacos替代config做配置中心
+
+配置中心
+匹配规则
+
+
+nacos集群和持久化配置（目前只支持mysql）
+
+vip（virtual ip nginx实现）-->集群
+
+nacos集群配置（nginx负载均衡代理转发，暂未实操，需看视频重新实操110集）
+
+
+sentinel（服务降级熔断和限流） 与hystrix的区别，优势所在
+hystrix需要我们自己手工搭建监控平台
+sentinel  单独一个组件，可独立，直接界面话的细粒度统一配置
+懒加载，要有交易进来之后才会加载
+配置和注解
+
+
+流控规则
+
+直接（默认）
+关联
+链路
+预热 冷加载因子默认3 （应用：秒杀场景）
+排队等待（应用场景：消息队列）  如检票进站：大批量，但只能一个个进
+
+降级  RT（平均响应时间），异常比例，异常数
+sentinel断路器没有半开状态
+hystrix有半开
+
+短路器熔断触发的条件
+热点key限流 （热点规则限流 重点）
+
+自定义兜底方法
+注解sentinelresource功能 类似hystrixcommand
+
+系统规则
+
+
+
+
+客户自定义限流处理，解决耦合和代码膨胀
+blockhandler 管的是控制台配置的规则
+fallback管java异常
+优先级 blockhandler更高
+exceptiontoignore 可忽略的异常
+
+sentinel结合openfeign  进行服务熔断和降级 
+
+
+sentinel持久化（微服务配置的规则等重启服务就消失）
+nacos控制台配置.json
+
+
+
+
+
+
+微服务工程的打包和部署
+编写批量启动和批量停止的sh脚本
+编写启动和停止sh脚本（可带参数停止指定服务器服务）
+
+
+
+seata分布式事务处理
+背景：多数据多库，一个模块需要连接多库，跨库操作
+保障全局数据一致性
+1+3
+全局事务id  TC TM RM
+三个组件拿到同一个Xid（全局事务id）
+Xid发布出去，订阅的拿到消息后就属同义词事务中
+
+本地 @transactional
+全局 @globaltransactional
+专注于业务逻辑
+
+改配置文件时先备份在修改
+
+先启动nacos，再启动seata
+
+
+
+
+mongdb要学  数据存储结构  bson  二进制json

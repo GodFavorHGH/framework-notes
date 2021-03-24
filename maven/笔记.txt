@@ -1,0 +1,5 @@
+mvn install    导出为pom依赖
+dependencyManagement  只声明依赖，不实现引入，为父类用
+dependencies  一般为子类用
+
+类似与java的继承，父类的方法子类进行重写时，指定自己想要的版本
